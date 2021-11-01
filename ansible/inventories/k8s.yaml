@@ -1,0 +1,8 @@
+control-planes:
+  hosts:
+    k8s-cpl-1:
+      ansible_host: 192.168.33.10
+workers:
+  hosts:
+    k8s-wrk-1:
+      ansible_host: 192.168.33.11

@@ -1,0 +1,70 @@
+- become: true
+  hosts: all
+  tasks:
+    - name: Deloy module config
+      copy:
+        dest: /etc/modules-load.d/containerd.conf
+        src: containerd.conf
+    - name: Enable modules
+      modprobe:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - overlay
+        - br_netfilter
+    - name: Set sysctl
+      sysctl:
+        name: "{{ item }}"
+        value: '1'
+        sysctl_set: yes
+        state: present
+        reload: yes
+      loop:
+        - net.bridge.bridge-nf-call-iptables
+        - net.ipv4.ip_forward
+        - net.bridge.bridge-nf-call-ip6tables
+    - name: Install prerequisites
+      package:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - containerd
+          - curl
+          - gnupg2
+          - software-properties-common
+        state: present
+    - name: Create config dir
+      file:
+        path: /etc/containerd
+        recurse: true
+        state: directory
+    - name: Get containerd config file state
+      shell: ls /etc/containerd/config.toml
+      failed_when: false
+      register: containerd_stat
+    - name: Generate containerd config
+      shell: containerd config default > /etc/containerd/config.toml
+      when: containerd_stat.rc != 0
+    - name: Get gpg key
+      get_url:
+        dest: /tmp/k8s.gpg
+        url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    - name: Add Kubernetes apt-key
+      apt_key:
+        file: /tmp/k8s.gpg
+        state: present
+    - name: Add Kubernetes' APT repository
+      apt_repository:
+        filename: 'kubernetes'
+        repo: deb http://apt.kubernetes.io/ kubernetes-xenial main
+        state: present
+    - name: Install kubernetes packages
+      package:
+        name:
+          - kubelet={{ kubernetes.version }}
+          - kubeadm={{ kubernetes.version }}
+          - kubectl={{ kubernetes.version }}
+        state: present
+        update_cache: true
+  vars_files:
+    - vars/main.yaml

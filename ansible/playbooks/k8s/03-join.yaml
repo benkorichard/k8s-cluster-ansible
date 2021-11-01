@@ -1,0 +1,12 @@
+- become: true
+  hosts: workers
+  tasks:
+    - name: Get cluster state
+      failed_when: false
+      shell: ls /etc/kubernetes/kubelet.conf
+      register: cluster_stat
+    - name: Join the cluster
+      shell: kubeadm join "{{ hostvars[groups['control-planes'][0]]['ansible_host'] }}:{{ kubernetes.port }}" --token={{ kubernetes.token}} --discovery-token-unsafe-skip-ca-verification
+      when: cluster_stat.rc != 0
+  vars_files:
+    - vars/main.yaml

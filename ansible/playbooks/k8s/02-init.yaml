@@ -1,0 +1,28 @@
+- become: true
+  hosts: control-planes[0]
+  tasks:
+    - name: Get cluster state
+      become_user: ubuntu
+      failed_when: false
+      shell: kubectl cluster-info
+      register: cluster_stat
+    - name: Initialize the cluster
+      shell: kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address={{ ansible_host }} --token={{ kubernetes.token}}
+      when: cluster_stat.rc != 0
+    - name: create .kube directory
+      file:
+        mode: 0755
+        path: /home/{{ ansible_user }}/.kube
+        state: directory
+        owner: "{{ ansible_user }}"
+    - name: copy admin.conf to user's kube config
+      copy:
+        dest: /home/{{ ansible_user }}/.kube/config
+        remote_src: true
+        src: /etc/kubernetes/admin.conf
+        owner: "{{ ansible_user }}"
+    - name: Deploy calico
+      become_user: ubuntu
+      shell: kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
+  vars_files:
+    - vars/main.yaml
