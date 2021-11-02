@@ -1,6 +1,10 @@
 - become: true
-  hosts: control-planes[0]
+  hosts: control-plane
   tasks:
+    - name: Install kubectl
+      package:
+        name: kubectl={{ kubernetes.version }}
+        state: present
     - name: Get cluster state
       become_user: ubuntu
       failed_when: false
@@ -21,8 +25,5 @@
         remote_src: true
         src: /etc/kubernetes/admin.conf
         owner: "{{ ansible_user }}"
-    - name: Deploy calico
-      become_user: ubuntu
-      shell: kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
   vars_files:
     - vars/main.yaml

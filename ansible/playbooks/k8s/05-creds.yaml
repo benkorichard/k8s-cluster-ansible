@@ -1,0 +1,11 @@
+- become: false
+  hosts: control-plane
+  tasks:
+    - name: Get config file
+      register: kube_conf
+      shell: cat /home/{{ ansible_user }}/.kube/config
+    - name: Generate local kube config
+      delegate_to: localhost
+      copy:
+        content: "{{ kube_conf.stdout }}"
+        dest: ../../../cluster.config

@@ -1,4 +1,4 @@
-control-planes:
+control-plane:
   hosts:
     k8s-cpl-1:
       ansible_host: 192.168.33.10

@@ -1,0 +1,67 @@
+- become: true
+  environment:
+      K8S_AUTH_KUBECONFIG: /home/{{ ansible_user }}/.kube/config
+  hosts: control-plane
+  tasks:
+    - name: Add Helm apt-key
+      apt_key:
+        state: present
+        url: https://baltocdn.com/helm/signing.asc
+    - name: Add Helm APT repository
+      apt_repository:
+        filename: helm
+        repo: deb https://baltocdn.com/helm/stable/debian/ all main
+        state: present
+    - name: Install management packages
+      package:
+        name:
+          - helm
+          - pip
+        state: present
+        update_cache: true
+    - name: Install pip modules
+      pip:
+        name: kubernetes
+        state: present
+    - name: Create Calico namespace
+      k8s:
+        kind: Namespace
+        name: calico
+        state: present
+    - name: Add Calico repository
+      kubernetes.core.helm_repository:
+        name: projectcalico
+        repo_url: https://docs.projectcalico.org/charts
+    - name: Deploy Calico
+      kubernetes.core.helm:
+        chart_ref: projectcalico/tigera-operator
+        name: calico
+        release_namespace: calico
+    - name: Create Metallb namespace
+      k8s:
+        kind: Namespace
+        name: metallb
+        state: present
+    - name: Add MealLB repository
+      kubernetes.core.helm_repository:
+        name: metallb
+        repo_url: https://metallb.github.io/metallb
+    - name: Deploy Metallb
+      kubernetes.core.helm:
+        chart_ref: metallb/metallb
+        name: metallb
+        release_namespace: metallb
+    - name: Create nginx-ingress namespace
+      k8s:
+        kind: Namespace
+        name: nginx-ingress
+        state: present
+    - name: Add nginx-ingress repository
+      kubernetes.core.helm_repository:
+        name: nginx-stable
+        repo_url: https://helm.nginx.com/stable
+    - name: Deploy nginx-ingress
+      kubernetes.core.helm:
+        chart_ref: nginx-stable/nginx-ingress
+        name: nginx-ingress
+        release_namespace: nginx-ingress
