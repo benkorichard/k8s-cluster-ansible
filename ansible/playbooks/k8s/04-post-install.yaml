@@ -23,6 +23,16 @@
       pip:
         name: kubernetes
         state: present
+    - name: Create values directory
+      file:
+        mode: 0644
+        path: "{{ helm.values_dir }}"
+        recurse: true
+        state: directory
+    - name: Copy values file
+      synchronize:
+        dest: "{{ helm.values_dir }}"
+        src: files/values/
     - name: Create Calico namespace
       k8s:
         kind: Namespace
@@ -51,6 +61,7 @@
         chart_ref: metallb/metallb
         name: metallb
         release_namespace: metallb
+        values_files: "{{ helm.values_dir }}/metallb.yaml"
     - name: Create nginx-ingress namespace
       k8s:
         kind: Namespace
@@ -65,3 +76,5 @@
         chart_ref: nginx-stable/nginx-ingress
         name: nginx-ingress
         release_namespace: nginx-ingress
+  vars_files:
+    - vars/main.yaml

@@ -4,7 +4,7 @@
     - name: Deloy module config
       copy:
         dest: /etc/modules-load.d/containerd.conf
-        src: containerd.conf
+        src: config/containerd.conf
     - name: Enable modules
       modprobe:
         name: "{{ item }}"
