@@ -65,5 +65,12 @@
           - kubeadm={{ kubernetes.version }}
         state: present
         update_cache: true
+    - name: Hold kubernetes packages
+      dpkg_selections:
+        name: "{{ item }}"
+        selection: hold
+      loop:
+          - kubelet
+          - kubeadm
   vars_files:
     - vars/main.yaml

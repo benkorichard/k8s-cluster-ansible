@@ -8,4 +8,4 @@
       delegate_to: localhost
       copy:
         content: "{{ kube_conf.stdout }}"
-        dest: ../../../cluster.config
+        dest: ../../cluster.config

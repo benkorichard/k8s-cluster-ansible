@@ -10,5 +10,5 @@ cd ${WORKDIR}
 cd ${WORKDIR}/ansible
 ansible-galaxy collection install community.kubernetes
 ansible-galaxy collection install kubernetes.core
-ansible-playbook playbooks/k8s/main.yaml
+ansible-playbook playbooks/main.yaml
 cd ${WORKDIR}

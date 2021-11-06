@@ -1,0 +1,8 @@
+- become: false
+  hosts: control-plane
+  tasks:
+    - name: Deploy Prometheus
+      k8s:
+        definition: "{{ lookup('file', item) | from_yaml }}"
+        state: present
+      loop: "{{ lookup('fileglob', 'monitoring/*.yaml', wantlist=True) }}"
