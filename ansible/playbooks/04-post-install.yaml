@@ -69,11 +69,11 @@
         state: present
     - name: Add nginx-ingress repository
       kubernetes.core.helm_repository:
-        name: nginx-stable
+        name: nginx-ingress
         repo_url: https://helm.nginx.com/stable
     - name: Deploy nginx-ingress
       kubernetes.core.helm:
-        chart_ref: nginx-stable/nginx-ingress
+        chart_ref: nginx-ingress/nginx-ingress
         name: nginx-ingress
         release_namespace: nginx-ingress
   vars_files:

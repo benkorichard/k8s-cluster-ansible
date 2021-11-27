@@ -4,4 +4,3 @@
 - import_playbook: 04-post-install.yaml
 - import_playbook: 05-creds.yaml
 - import_playbook: 06-node_exporter.yaml
-- import_playbook: 07-monitoring.yaml

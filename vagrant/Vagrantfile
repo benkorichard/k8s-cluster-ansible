@@ -8,7 +8,7 @@ Vagrant.configure("2") do |config|
       cpl.vm.hostname = "k8s-cpl-1"
       cpl.vm.network "private_network", ip: "192.168.33.10"
     end
-    config.vm.define "wrk" do |wrk|
+    config.vm.define "wrk-1" do |wrk|
       wrk.vm.provider "virtualbox" do |vb_wrk|
           vb_wrk.memory = 2048
           vb_wrk.cpus = 2
@@ -16,6 +16,15 @@ Vagrant.configure("2") do |config|
       wrk.vm.box = "generic/ubuntu2004"
       wrk.vm.hostname = "k8s-wrk-1"
       wrk.vm.network "private_network", ip: "192.168.33.11"
+    end
+    config.vm.define "wrk-2" do |wrk|
+      wrk.vm.provider "virtualbox" do |vb_wrk|
+          vb_wrk.memory = 2048
+          vb_wrk.cpus = 2
+        end
+      wrk.vm.box = "generic/ubuntu2004"
+      wrk.vm.hostname = "k8s-wrk-2"
+      wrk.vm.network "private_network", ip: "192.168.33.12"
     end
     config.vm.provision "file", source: "~/.ssh", destination: "~/ssh"
     config.vm.provision "shell", path: "provision.sh", privileged: true
