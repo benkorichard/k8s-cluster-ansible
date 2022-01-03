@@ -1,4 +1,13 @@
 - become: true
+  handlers:
+    - name: Reload sysetmd daemon
+      systemd:
+          daemon_reload: true
+      notify: Restart kubelet
+    - name: Restart kubelet
+      service:
+          name: kubelet
+          state: restarted
   hosts: all
   tasks:
     - name: Deloy module config
@@ -72,5 +81,10 @@
       loop:
           - kubelet
           - kubeadm
+    - name: Template kubelet config
+      template:
+        dest: /etc/default/kubelet
+        src: kubelet.j2
+      notify: Reload sysetmd daemon
   vars_files:
     - vars/main.yaml
