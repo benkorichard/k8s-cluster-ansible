@@ -1,6 +1,6 @@
 kubernetes:
   port: 6443
   token: eich1w.ig3chei2vuab7kop
-  version: 1.22.3-00
+  version: 1.23.1-00
 helm:
   values_dir: /data/values
