@@ -42,6 +42,7 @@
           - gnupg2
           - software-properties-common
         state: present
+        update_cache: true
     - name: Create config dir
       file:
         path: /etc/containerd

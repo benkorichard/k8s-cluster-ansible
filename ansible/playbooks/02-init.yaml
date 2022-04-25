@@ -1,10 +1,10 @@
 - become: true
   hosts: control-plane
   tasks:
-    - name: Install kubectl
-      package:
-        name: kubectl={{ kubernetes.version }}
-        state: present
+    #- name: Install kubectl
+    #  package:
+    #    name: kubectl={{ kubernetes.version }}
+    #    state: present
     - name: Get cluster state
       become_user: ubuntu
       failed_when: false
